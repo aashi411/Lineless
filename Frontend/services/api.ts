@@ -1,5 +1,31 @@
 
+import axios from 'axios';
 import { PriorityLevel, TransportMode, OperatorSession } from '../types';
+
+// Get API URL from environment variables
+// Production: Uses VITE_API_URL from .env.production
+// Development: Uses VITE_API_URL from .env.local or defaults to localhost
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+console.log('[API Client] Using API URL:', API_URL);
+
+// API Client for backend communication
+export const apiClient = axios.create({
+  baseURL: API_URL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  }
+});
+
+// Response interceptor for debugging
+apiClient.interceptors.response.use(
+  response => response,
+  error => {
+    console.error('[API Error]', error.message);
+    return Promise.reject(error);
+  }
+);
 
 export const LineLessAPI = {
   // FASTAPI MOCK: POST /auth/login
@@ -41,3 +67,4 @@ export const LineLessAPI = {
     };
   }
 };
+
